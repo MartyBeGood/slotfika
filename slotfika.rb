@@ -37,10 +37,10 @@ def score(results)
   results.uniq.sum { SLOT_SYMBOLS[_1][results.count(_1) - 1] }
 end
 
-def hoops_to_jump_through_to_exit
+def keep_user_playing
   puts "Do you want to leave already? Please answer yes or no."
   answer = gets.chomp
-  return false unless answer.downcase == "yes"
+  return true unless answer.downcase == "yes"
 
   puts "I'm afraid I can't just let you do that. You'll have to answer a trivia question first to make sure you mean it!"
 
@@ -52,6 +52,7 @@ def hoops_to_jump_through_to_exit
   response = Net::HTTP.get(uri)
   trivia = JSON.parse(response)['results'][0]
 
+  puts
   puts CGI.unescapeHTML(trivia['question'])
 
   correct_answer = trivia['correct_answer']
@@ -64,11 +65,7 @@ def hoops_to_jump_through_to_exit
 
   selection = gets.chomp.to_i - 1
 
-  puts "Correct answer is #{correct_answer}, index is #{possible_answers.index(correct_answer)}"
-  puts "You answered #{selection + 1}"
-
-  return selection == possible_answers.index(correct_answer)
-  selection == possible_answers.index(correct_answer)
+  return selection != possible_answers.index(correct_answer)
 end
 
 def main_loop
@@ -92,8 +89,8 @@ def main_loop
     rescue Interrupt
       puts
       puts
-      keep_playing = hoops_to_jump_through_to_exit
 
+      keep_playing = keep_user_playing
       if keep_playing
         puts "I was hoping you'd say that! Let's play again!"
       else
