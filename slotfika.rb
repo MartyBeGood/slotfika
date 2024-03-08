@@ -1,11 +1,4 @@
 require "io/console"
-# Define the symbols that will be used in the slot machine
-# Should include
-# - cherry
-# - lemon
-# - money
-# - grape
-# - horse shoe
 SLOT_SYMBOLS = {
   "🍒" => [ 10, 100, 1000 ],
   "🍋" => [ 0,  0, 1    ],
@@ -71,21 +64,26 @@ end
 def main_loop
   keep_playing = true
 
+  balance = 100
+
   while(keep_playing) do
     begin
-    puts "Insert credit card (or press spacebar to play for free)"
-    STDIN.getch
+      puts
+      puts "You have #{balance}c. Press space to pay 25c and play!"
+      STDIN.getch
 
-    # Draw 3 random emoji for the three wheels
-    animation
+      balance -= 25
+      # Draw 3 random emoji for the three wheels
+      animation
 
-    results = 3.times.map { SLOT_SYMBOLS.keys.sample }
-    puts results.join(" ")
+      results = 3.times.map { SLOT_SYMBOLS.keys.sample }
+      puts results.join(" ")
 
-    sleep 0.5
+      sleep 0.5
 
-    final_score = score(results)
-    final_score > 0 ? puts("You win #{final_score}c! I'm sure you'll beat that next time!") : puts("Ah, too bad! Try again!")
+      final_score = score(results)
+      final_score > 0 ? puts("You win #{final_score}c! I'm sure you'll beat that next time!") : puts("Ah, too bad! Try again!")
+      balance += final_score
     rescue Interrupt
       puts
       puts
